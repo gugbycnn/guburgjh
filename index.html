@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>天运 · 辅助</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            min-height: 100vh;
+            background: #e8f4f8;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            color: #1a3a5a;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        /* ===== 所有页面强制全屏 ===== */
+        .page {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #e8f4f8;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
+        /* ===== 主界面 ===== */
+        #mainPage {
+            justify-content: center;
+            padding: 1.2rem;
+            overflow-y: auto;
+            background: #e8f4f8;
+        }
+
+        #mainPage .app {
+            width: 100%;
+            max-width: 480px;
+            text-align: center;
+            background: transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 85vh;
+        }
+
+        #mainPage .main-title {
+            font-size: 2rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            color: #1a3a5a;
+            margin-bottom: 1.4rem;
+            width: 100%;
+        }
+
+        #mainPage .avatar-wrapper {
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 1.8rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            background: radial-gradient(circle at 30% 30%, #5a9acf, #2a6a9a);
+            box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.06), 0 0 30px rgba(60, 140, 220, 0.2), inset 0 -4px 20px rgba(0, 0, 0, 0.2);
+            animation: spin 12s linear infinite;
+            will-change: transform;
+            overflow: hidden;
+        }
+
+        #mainPage .avatar-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent 0deg, rgba(255,255,255,0.15) 60deg, transparent 120deg, rgba(100,200,255,0.15) 180deg, transparent 240deg, rgba(255,255,255,0.1) 300deg, transparent 360deg);
+            animation: shimmer 6s linear infinite;
+            pointer-events: none;
+        }
+
+        #mainPage .avatar-wrapper::after {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: inset 0 0 40px rgba(60, 160, 255, 0.08), 0 0 60px rgba(60, 160, 255, 0.05);
+            pointer-events: none;
+            animation: pulseGlow 3s ease-in-out infinite;
+        }
+
+        #mainPage .avatar-text {
+            position: relative;
+            z-index: 2;
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(100, 200, 255, 0.3), 0 0 60px rgba(60, 160, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.4);
+            font-family: 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+            user-select: none;
+        }
+
+        #mainPage .avatar-text::after {
+            content: '✦';
+            display: block;
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 6px;
+            margin-top: -6px;
+            text-shadow: 0 0 10px rgba(100, 200, 255, 0.1);
+        }
+
+        #mainPage .dot-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        #mainPage .dot-ring span {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(100, 200, 255, 0.1);
+        }
+
+        #mainPage .dot-ring span:nth-child(1) { top: 6%; left: 50%; }
+        #mainPage .dot-ring span:nth-child(2) { top: 20%; right: 8%; }
+        #mainPage .dot-ring span:nth-child(3) { bottom: 20%; right: 8%; }
+        #mainPage .dot-ring span:nth-child(4) { bottom: 6%; left: 50%; }
+        #mainPage .dot-ring span:nth-child(5) { bottom: 20%; left: 8%; }
+        #mainPage .dot-ring span:nth-child(6) { top: 20%; left: 8%; }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes shimmer {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
+
+        #mainPage .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.9rem;
+            width: 100%;
+            margin-top: 0.4rem;
+        }
+
+        #mainPage .btn {
+            display: block;
+            width: 100%;
+            padding: 1rem 0.8rem;
+            border-radius: 20px;
+            border: 1px solid rgba(60, 140, 200, 0.2);
+            background: rgba(180, 220, 240, 0.5);
+            color: #1a4a6a;
+            font-size: 1.2rem;
+            font-weight: 500;
+            letter-spacing: 0.8px;
+            text-align: center;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(60, 140, 200, 0.08);
+        }
+
+        #mainPage .btn:hover {
+            background: rgba(140, 200, 230, 0.7);
+            border-color: rgba(60, 140, 200, 0.3);
+            transform: scale(1.01);
+            box-shadow: 0 4px 16px rgba(60, 140, 200, 0.15);
+            color: #0a2a4a;
+        }
+
+        #mainPage .btn:active {
+            transform: scale(0.97);
+            background: rgba(120, 180, 220, 0.7);
+        }
+
+        #mainPage .btn-primary {
+            background: rgba(60, 160, 220, 0.2);
+            border-color: rgba(60, 160, 220, 0.25);
+        }
+
+        #mainPage .footer-text {
+            margin-top: 2.4rem;
+            font-size: 0.8rem;
+            color: rgba(26, 58, 90, 0.25);
+            letter-spacing: 2px;
+            border: none;
+            background: transparent;
+            padding: 0;
+            width: 100%;
+        }
+
+        /* ===== 教程页面 ===== */
+        #tutorialPage {
+            background: #e8f4f8;
+            padding: 0;
+            justify-content: flex-start;
+            overflow-y: auto;
+        }
+
+        #tutorialPage .navbar {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            border-bottom: 1px solid rgba(60, 140, 200, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            width: 100%;
+            flex-shrink: 0;
+        }
+
+        #tutorialPage .navbar .back-btn {
+            color: #2a7a9a;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 10px;
+            background: rgba(60, 140, 200, 0.06);
+            border: 1px solid rgba(60, 140, 200, 0.1);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        #tutorialPage .navbar .back-btn:hover {
+            background: rgba(60, 140, 200, 0.12);
+        }
+
+        #tutorialPage .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px 18px 60px;
+            width: 100%;
+            flex: 1;
+        }
+
+        #tutorialPage .welcome-card {
+            background: linear-gradient(145deg, rgba(60, 160, 220, 0.08), rgba(40, 120, 180, 0.04));
+            border-radius: 24px;
+            padding: 28px 24px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(60, 140, 200, 0.08);
+            box-shadow: 0 4px 20px rgba(60, 140, 200, 0.06);
+        }
+
+        #tutorialPage .welcome-card h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a4a6a;
+            margin-bottom: 8px;
+        }
+
+        #tutorialPage .welcome-card p {
+            font-size: 14px;
+            color: rgba(26, 58, 90, 0.55);
+            line-height: 1.7;
+        }
+
+        #tutorialPage .section-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: #1a4a6a;
+            margin: 28px 0 14px 0;
+            padding-left: 12px;
+            border-left: 3px solid #4a9acf;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #tutorialPage .section-title .badge {
+            font-size: 11px;
+            background: rgba(60, 140, 200, 0.08);
+            color: #2a6a8a;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-weight: 400;
+        }
+
+        #tutorialPage .feature-card {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 16px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(60, 140, 200, 0.06);
+            transition: all 0.2s;
+        }
+
+        #tutorialPage .feature-card:hover {
+            background: rgba(255, 255, 255, 0.7);
+            border-color: rgba(60, 140, 200, 0.12);
+        }
+
+        #tutorialPage .feature-card .head {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 6px;
+        }
+
+        #tutorialPage .feature-card .head .name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1a4a6a;
+        }
+
+        #tutorialPage .feature-card .head .tag {
+            font-size: 10px;
+            background: rgba(60, 160, 220, 0.12);
+            color: #2a7a9a;
+            padding: 2px 10px;
+            border-radius: 12px;
+            margin-left: auto;
+        }
+
+        #tutorialPage .feature-card .desc {
+            font-size: 13px;
+            color: rgba(26, 58, 90, 0.5);
+            line-height: 1.6;
+            padding-left: 0;
+        }
+
+        #tutorialPage .feature-card .desc code {
+            background: rgba(60, 140, 200, 0.06);
+            padding: 1px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #1a6a8a;
+            font-family: monospace;
+        }
+
+        #tutorialPage .step-list {
+            counter-reset: step;
+            padding: 0;
+        }
+
+        #tutorialPage .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid rgba(60, 140, 200, 0.06);
+        }
+
+        #tutorialPage .step-item:last-child {
+            border-bottom: none;
+        }
+
+        #tutorialPage .step-item .num {
+            counter-increment: step;
+            flex-shrink: 0;
+            width: 28px;
+            height: 28px;
+            background: rgba(60, 140, 200, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: #2a7a9a;
+        }
+
+        #tutorialPage .step-item .content {
+            font-size: 14px;
+            color: rgba(26, 58, 90, 0.6);
+            line-height: 1.6;
+        }
+
+        #tutorialPage .step-item .content strong {
+            color: #1a4a6a;
+        }
+
+        #tutorialPage .warning-box {
+            background: rgba(255, 152, 0, 0.06);
+            border: 1px solid rgba(255, 152, 0, 0.1);
+            border-radius: 14px;
+            padding: 16px 20px;
+            margin: 16px 0;
+        }
+
+        #tutorialPage .warning-box .title {
+            color: #bf6a00;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        #tutorialPage .warning-box p {
+            font-size: 13px;
+            color: rgba(26, 58, 90, 0.45);
+            line-height: 1.6;
+            margin-top: 4px;
+            padding-left: 0;
+        }
+
+        #tutorialPage .footer-text {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(26, 58, 90, 0.2);
+            letter-spacing: 1px;
+            border-top: 1px solid rgba(60, 140, 200, 0.06);
+            padding-top: 24px;
+        }
+
+        /* ===== 下载页面 ===== */
+        #downloadPage {
+            background: #e8f4f8;
+            padding: 0;
+            justify-content: flex-start;
+            overflow-y: auto;
+        }
+
+        #downloadPage .navbar {
+            background: transparent;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            flex-shrink: 0;
+        }
+
+        #downloadPage .navbar .back-btn {
+            color: #2a7a9a;
+            font-size: 16px;
+            font-weight: 500;
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 10px;
+            background: rgba(60, 140, 200, 0.06);
+            border: 1px solid rgba(60, 140, 200, 0.1);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        #downloadPage .navbar .back-btn:hover {
+            background: rgba(60, 140, 200, 0.12);
+        }
+
+        #downloadPage .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 0 18px 60px;
+            width: 100%;
+            flex: 1;
+        }
+
+        #downloadPage .download-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 20px;
+            border: 1px solid rgba(60, 140, 200, 0.08);
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        #downloadPage .download-card .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            background: rgba(200, 230, 245, 0.3);
+            cursor: default;
+        }
+
+        #downloadPage .download-card .card-header .name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a4a6a;
+        }
+
+        #downloadPage .download-card .card-header .name .version-tag {
+            font-size: 12px;
+            font-weight: 400;
+            color: rgba(26, 58, 90, 0.3);
+            margin-left: 8px;
+        }
+
+        #downloadPage .download-card .card-header .download-btn {
+            padding: 8px 24px;
+            border-radius: 20px;
+            border: none;
+            background: linear-gradient(135deg, #3a8aba, #1a6a9a);
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+
+        #downloadPage .download-card .card-header .download-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 16px rgba(60, 140, 200, 0.3);
+        }
+
+        #downloadPage .download-card .card-header .download-btn:active {
+            transform: scale(0.95);
+        }
+
+        #downloadPage .download-card .card-body {
+            padding: 20px 24px 24px;
+            border-top: 1px solid rgba(60, 140, 200, 0.06);
+        }
+
+        #downloadPage .download-card .card-body .desc {
+            font-size: 14px;
+            color: rgba(26, 58, 90, 0.5);
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        #downloadPage .download-card .card-body .desc strong {
+            color: #1a4a6a;
+        }
+
+        #downloadPage .download-card .card-body .info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 0;
+            font-size: 13px;
+            color: rgba(26, 58, 90, 0.4);
+        }
+
+        #downloadPage .download-card .card-body .info-row .label {
+            color: rgba(26, 58, 90, 0.25);
+            min-width: 60px;
+        }
+
+        #downloadPage .download-card .card-body .info-row .value {
+            color: rgba(26, 58, 90, 0.55);
+        }
+
+        #downloadPage .download-card .card-body .info-row .value code {
+            background: rgba(60, 140, 200, 0.06);
+            padding: 1px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #1a6a8a;
+            font-family: monospace;
+        }
+
+        #downloadPage .download-card .card-body .features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        #downloadPage .download-card .card-body .features .tag {
+            font-size: 11px;
+            background: rgba(60, 140, 200, 0.06);
+            color: #2a6a8a;
+            padding: 4px 14px;
+            border-radius: 20px;
+            border: 1px solid rgba(60, 140, 200, 0.06);
+        }
+
+        #downloadPage .footer-text {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 12px;
+            color: rgba(26, 58, 90, 0.2);
+            letter-spacing: 1px;
+            border-top: 1px solid rgba(60, 140, 200, 0.06);
+            padding-top: 24px;
+        }
+
+        /* ===== 下载弹窗 - 在当前页面显示 ===== */
+        .download-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .download-overlay.show {
+            display: flex;
+        }
+
+        .download-overlay .dialog {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 30px 28px 24px;
+            max-width: 380px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            animation: dialogPop 0.25s ease-out;
+        }
+
+        @keyframes dialogPop {
+            from { transform: scale(0.85); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .download-overlay .dialog .icon {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+
+        .download-overlay .dialog .title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a3a5a;
+            margin-bottom: 4px;
+        }
+
+        .download-overlay .dialog .filename {
+            font-size: 15px;
+            color: #2a5a7a;
+            margin-bottom: 4px;
+        }
+
+        .download-overlay .dialog .size {
+            font-size: 13px;
+            color: rgba(26, 58, 90, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .download-overlay .dialog .btn-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .download-overlay .dialog .btn-row .btn-cancel {
+            padding: 10px 28px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            background: #f0f2f5;
+            color: #555;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            flex: 1;
+            transition: all 0.2s;
+        }
+
+        .download-overlay .dialog .btn-row .btn-cancel:hover {
+            background: #e4e6ea;
+        }
+
+        .download-overlay .dialog .btn-row .btn-download {
+            padding: 10px 28px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #3a8aba, #1a6a9a);
+            color: #ffffff;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+            transition: all 0.2s;
+        }
+
+        .download-overlay .dialog .btn-row .btn-download:hover {
+            transform: scale(1.02);
+            box-shadow: 0 4px 16px rgba(60, 140, 200, 0.3);
+        }
+
+        @media (max-width: 480px) {
+            #mainPage .app {
+                min-height: 80vh;
+                padding: 0 4px;
+            }
+            #mainPage .main-title {
+                font-size: 1.6rem;
+            }
+            #mainPage .avatar-wrapper {
+                width: 120px;
+                height: 120px;
+            }
+            #mainPage .avatar-text {
+                font-size: 2.5rem;
+            }
+            #mainPage .btn {
+                font-size: 1rem;
+                padding: 0.85rem 0.6rem;
+                border-radius: 16px;
+            }
+
+            #tutorialPage .container {
+                padding: 12px 14px 40px;
+            }
+            #tutorialPage .welcome-card {
+                padding: 20px 18px;
+            }
+            #tutorialPage .welcome-card h1 {
+                font-size: 19px;
+            }
+            #tutorialPage .feature-card .desc {
+                padding-left: 0;
+                margin-top: 4px;
+            }
+
+            #downloadPage .container {
+                padding: 0 14px 40px;
+            }
+            #downloadPage .download-card .card-header {
+                flex-wrap: wrap;
+                gap: 10px;
+                padding: 16px 18px;
+            }
+            #downloadPage .download-card .card-header .name {
+                font-size: 16px;
+            }
+            #downloadPage .download-card .card-header .download-btn {
+                font-size: 13px;
+                padding: 6px 18px;
+            }
+            #downloadPage .download-card .card-body {
+                padding: 16px 18px 20px;
+            }
+            #downloadPage .navbar {
+                padding: 12px 16px;
+            }
+
+            .download-overlay .dialog {
+                padding: 24px 20px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== 主界面 ===== -->
+    <div id="mainPage" class="page active">
+        <div class="app">
+            <div class="main-title">天运·辅助</div>
+            <div class="avatar-wrapper">
+                <div class="dot-ring">
+                    <span></span><span></span><span></span>
+                    <span></span><span></span><span></span>
+                </div>
+                <span class="avatar-text">天运</span>
+            </div>
+            <div class="button-group">
+                <button class="btn" id="btnTutorial">使用教程</button>
+                <button class="btn" id="btnGallery">软件图片</button>
+                <button class="btn btn-primary" id="btnDownload">天运辅助下载</button>
+            </div>
+            <div class="footer-text">天运·稳定赋能</div>
+        </div>
+    </div>
+
+    <!-- ===== 教程页面 ===== -->
+    <div id="tutorialPage" class="page">
+        <div class="navbar">
+            <span class="back-btn" id="backFromTutorial">← 返回</span>
+        </div>
+        <div class="container">
+            <div class="welcome-card">
+                <h1>天运公益 · 辅助工具</h1>
+                <p>专为 PUBG 国服打造的安全辅助工具，提供稳定、高效的注入方案。本工具采用独家思路，内置防二改水印，助力玩家轻松上分。</p>
+            </div>
+            <div class="section-title">公告内容 <span class="badge">共5项</span></div>
+            <div class="feature-card"><div class="head"><span class="name">双模块注入</span><span class="tag">核心</span></div><div class="desc">提供 <strong>天运公益V1.0</strong> 和 <strong>天运公益V1.0原版</strong> 两个模块，一键注入到游戏 <code>Paks</code> 目录，支持 PUBG 国服。</div></div>
+            <div class="feature-card"><div class="head"><span class="name">文件校验</span><span class="tag">必备</span></div><div class="desc">内置资源包自动解压，校验文件完整性，确保注入文件正确无误。在「查询」页面点击 <strong>文件校验</strong> 按钮即可完成。</div></div>
+            <div class="feature-card"><div class="head"><span class="name">一键删除</span><span class="tag">安全</span></div><div class="desc">支持删除已注入的模块文件，方便切换版本或清理残留。删除前会进行二次确认，避免误操作。</div></div>
+            <div class="feature-card"><div class="head"><span class="name">状态查询</span><span class="tag">实时</span></div><div class="desc">在「查询」页面可查看 <strong>授权状态</strong>（Shizuku）、<strong>文件状态</strong>（是否解压）、<strong>启动次数</strong> 和 <strong>注入次数</strong> 等关键信息。</div></div>
+            <div class="feature-card"><div class="head"><span class="name">防二改水印</span><span class="tag">独家</span></div><div class="desc">内置天运独家水印，防止模块被二次修改和倒卖，保障用户的稳定体验。</div></div>
+            <div class="section-title">使用步骤 <span class="badge">三步上手</span></div>
+            <div class="step-list">
+                <div class="step-item"><span class="num"></span><div class="content"><strong>授权 Shizuku</strong><br>打开 Shizuku 应用，确保已授权本工具。在「查询」页面查看授权状态是否为 <strong style="color:#2e7d32;">已授权</strong>。</div></div>
+                <div class="step-item"><span class="num"></span><div class="content"><strong>文件校验</strong><br>在「查询」页面点击 <strong>文件校验</strong> 按钮，等待资源包解压完成。状态显示 <strong style="color:#2e7d32;">已解压</strong> 后即可进行注入。</div></div>
+                <div class="step-item"><span class="num"></span><div class="content"><strong>选择模块注入</strong><br>在「功能」页面选择 <strong>天运公益V1.0</strong> 或 <strong>原版</strong>，点击 <strong>一键注入</strong> 按钮，等待注入完成即可上号奔放。</div></div>
+            </div>
+            <div class="warning-box"><div class="title">温馨提示</div><p>· 请勿在百米外使用腰射，避免被检测<br>· 建议使用小号体验，稳定后再上大号<br>· 如遇设备黑号，请刷机后重新使用</p></div>
+            <div class="footer-text">天运公益 · 稳定赋能  ✦  独家思路  ✦  防二改水印</div>
+        </div>
+    </div>
+
+    <!-- ===== 下载页面 ===== -->
+    <div id="downloadPage" class="page">
+        <div class="navbar">
+            <span class="back-btn" id="backFromDownload">← 返回</span>
+        </div>
+        <div class="container">
+            <div class="download-card">
+                <div class="card-header">
+                    <span class="name">天运辅助 <span class="version-tag">V1.0</span></span>
+                    <button class="download-btn" id="downloadActionBtn">下载</button>
+                </div>
+                <div class="card-body">
+                    <div class="desc"><strong>天运公益</strong> 专为 PUBG 国服打造的安全辅助工具，提供稳定、高效的注入方案。采用独家思路，内置防二改水印。</div>
+                    <div class="info-row"><span class="label">版本</span><span class="value">天运公益 V1.0</span></div>
+                    <div class="info-row"><span class="label">大小</span><span class="value">约 565.30 MB</span></div>
+                    <div class="info-row"><span class="label">支持</span><span class="value">PUBG 国服</span></div>
+                    <div class="info-row"><span class="label">核心</span><span class="value"><code>双模块注入 · 文件校验 · 一键删除</code></span></div>
+                    <div class="features">
+                        <span class="tag">独家思路</span>
+                        <span class="tag">防二改水印</span>
+                        <span class="tag">稳定奔放</span>
+                        <span class="tag">安全注入</span>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-text">天运公益 · 稳定赋能  ✦  独家思路  ✦  防二改水印</div>
+        </div>
+    </div>
+
+    <!-- ===== 下载弹窗（在当前页面显示） ===== -->
+    <div class="download-overlay" id="downloadOverlay">
+        <div class="dialog">
+            <div class="icon">📱</div>
+            <div class="title">你想要下载此文件吗？</div>
+            <div class="filename">default.apk</div>
+            <div class="size">文件大小：565.3 MB</div>
+            <div class="btn-row">
+                <button class="btn-cancel" id="cancelDownload">取消</button>
+                <button class="btn-download" id="confirmDownload">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            const DOWNLOAD_URL = 'https://ghproxy.net/github.com/gugbycnn/guburgjh/releases/download/1.0/default.apk';
+
+            const mainPage = document.getElementById('mainPage');
+            const tutorialPage = document.getElementById('tutorialPage');
+            const downloadPage = document.getElementById('downloadPage');
+
+            const btnTutorial = document.getElementById('btnTutorial');
+            const btnGallery = document.getElementById('btnGallery');
+            const btnDownload = document.getElementById('btnDownload');
+            const backFromTutorial = document.getElementById('backFromTutorial');
+            const backFromDownload = document.getElementById('backFromDownload');
+            const downloadActionBtn = document.getElementById('downloadActionBtn');
+
+            const downloadOverlay = document.getElementById('downloadOverlay');
+            const cancelDownload = document.getElementById('cancelDownload');
+            const confirmDownload = document.getElementById('confirmDownload');
+
+            function showPage(pageId) {
+                document.querySelectorAll('.page').forEach(p => {
+                    p.classList.remove('active');
+                });
+                document.getElementById(pageId).classList.add('active');
+            }
+
+            // 使用教程
+            btnTutorial.addEventListener('click', function() {
+                showPage('tutorialPage');
+            });
+
+            // 软件图片
+            btnGallery.addEventListener('click', function() {
+                alert('软件图片：\n(此处可展示软件截图或跳转图库)');
+            });
+
+            // 天运辅助下载 - 跳转到下载页面
+            btnDownload.addEventListener('click', function() {
+                showPage('downloadPage');
+            });
+
+            // 教程返回
+            backFromTutorial.addEventListener('click', function() {
+                showPage('mainPage');
+            });
+
+            // 下载页面返回
+            backFromDownload.addEventListener('click', function() {
+                showPage('mainPage');
+            });
+
+            // ===== 下载按钮 - 在当前页面弹出确认框 =====
+            downloadActionBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                downloadOverlay.classList.add('show');
+            });
+
+            // 取消下载
+            cancelDownload.addEventListener('click', function() {
+                downloadOverlay.classList.remove('show');
+            });
+
+            // 点击遮罩层关闭
+            downloadOverlay.addEventListener('click', function(e) {
+                if (e.target === downloadOverlay) {
+                    downloadOverlay.classList.remove('show');
+                }
+            });
+
+            // 确认下载 - 触发真实下载
+            confirmDownload.addEventListener('click', function() {
+                downloadOverlay.classList.remove('show');
+                // 创建隐藏a标签触发下载
+                var link = document.createElement('a');
+                link.href = DOWNLOAD_URL;
+                link.download = 'default.apk';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+            console.log('✅ 天运辅助 · 已加载');
+        })();
+    </script>
+
+</body>
+</html>
